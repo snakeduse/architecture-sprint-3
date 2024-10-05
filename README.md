@@ -1,6 +1,22 @@
-# Базовая настройка
+# Проект "Smart Home"
 
-## Запуск minikube
+## Описание
+
+Проект "Smart Home" представляет собой приложение для управления домом. В данный момент поддерживается управление 
+отоплением и мониторинга температуры в умном доме. Пользователи могут удаленно включать/выключать отопление, 
+устанавливать желаемую температуру и просматривать текущую температуру через веб-интерфейс.
+
+Диаграмма контекста показана ниже:  
+![alt text](./diagrams/context/SmartHomeContextAsIs.svg)
+
+Приложение выделяет следующие доменные области:
+- Управление устройствами в домах;
+- Управление пользователя;
+- Работа с заявками от клиентов.
+
+## Базовая настройка
+
+### Запуск minikube
 
 [Инструкция по установке](https://minikube.sigs.k8s.io/docs/start/)
 
@@ -9,7 +25,7 @@ minikube start
 ```
 
 
-## Добавление токена авторизации GitHub
+### Добавление токена авторизации GitHub
 
 [Получение токена](https://github.com/settings/tokens/new)
 
@@ -18,7 +34,7 @@ kubectl create secret docker-registry ghcr --docker-server=https://ghcr.io --doc
 ```
 
 
-## Установка API GW kusk
+### Установка API GW kusk
 
 [Install Kusk CLI](https://docs.kusk.io/getting-started/install-kusk-cli)
 
@@ -27,7 +43,7 @@ kusk cluster install
 ```
 
 
-## Настройка terraform
+### Настройка terraform
 
 [Установите Terraform](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-quickstart#install-terraform)
 
@@ -46,20 +62,20 @@ provider_installation {
 }
 ```
 
-## Применяем terraform конфигурацию 
+### Применяем terraform конфигурацию 
 
 ```bash
 cd terraform
 terraform apply
 ```
 
-## Настройка API GW
+### Настройка API GW
 
 ```bash
 kusk deploy -i api.yaml
 ```
 
-## Проверяем работоспособность
+### Проверяем работоспособность
 
 ```bash
 kubectl port-forward svc/kusk-gateway-envoy-fleet -n kusk-system 8080:80
@@ -67,7 +83,7 @@ curl localhost:8080/hello
 ```
 
 
-## Delete minikube
+### Delete minikube
 
 ```bash
 minikube delete
