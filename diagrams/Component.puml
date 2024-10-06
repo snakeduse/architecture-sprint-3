@@ -1,0 +1,20 @@
+@startuml
+title Devices Service - Диаграмма компонентов
+
+top to bottom direction
+
+!include ./c4_source/C4_Component.puml
+
+Container(devices_service, "Devices Service", "Erlang, Cowboy", "Сервис управления устройствами") {
+  Component(api_handler, "API Handler", "Обработка HTTP-API запросов")
+  Component(http_parser, "HTTP Requests Parser", "Парсер входящих HTTP-запросов")
+  Component(db_layer, "Database API", "API базы данных")
+}
+
+ContainerDb(db, "Database", "PostgreSQL", "База данных сервиса устройств")
+
+Rel(api_handler, http_parser, "Разбор и валидация входящих HTTP-запросов")
+Rel(api_handler, db_layer, "Обращение к базе данных")
+Rel(db_layer, db, "Обращение к базе данных")
+
+@enduml
