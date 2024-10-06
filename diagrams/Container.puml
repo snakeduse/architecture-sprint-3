@@ -1,7 +1,7 @@
 @startuml
 title SmartHome - Диаграмма контейнеров
 
-left to right direction
+top to bottom direction
 
 !include ./c4_source/C4_Container.puml
 
