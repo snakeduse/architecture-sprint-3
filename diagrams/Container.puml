@@ -1,0 +1,48 @@
+@startuml
+title SmartHome - Диаграмма контейнеров
+
+left to right direction
+
+!include ./c4_source/C4_Container.puml
+
+Person(user, "User", "Пользователь системы")
+Person(admin, "Administrator", "Администратор системы, обрабатывает заявки технической поддержки")
+System_Ext(devices_ext, "Devices", "Устройства, которые управляют домом")
+System(SmartHomeSystem, "SmartHome System", "Система управления домом")
+
+Container_Boundary(SmartHomeSystem, "SmartHome System") {
+  Container(web_app, "UI Web Application", "React", "Основное веб-приложение для управления системой")
+  Container(api_gateway, "API Gateway", "Kusk, HTTP/1.1", "Обработка входящих HTTP-запросов")
+
+  Container(users_service, "Users Service", "Python, Flask", "Сервис управления пользователями")
+  ContainerDb(users_database, "Users Database", "PostgreSQL", "Хранение информации о пользователях")
+
+  Container(devices_service, "Devices Service", "Erlang, Cowboy", "Сервис управления устройствами")
+  ContainerDb(devices_database, "Devices Database", "PostgreSQL", "Хранение информации об устройствах")
+
+  Container(houses_service, "Houses Service", "Python, Flask", "Сервис управления домами")
+  ContainerDb(houses_database, "Houses Database", "PostgreSQL", "Хранение информации о домах")
+
+  Container(telemetry_service, "Telemetry Service", "Erlang, Cowboy", "Сервис управления телеметрией")
+  ContainerDb(telemetry_database, "Telemetry Database", "MongoDB", "Хранение информации о телеметрии")
+}
+
+Rel(web_app, api_gateway, "Работа с данными системы")
+
+Rel(user, web_app, "Регистрация, управление устройствами и телеметрией")
+Rel(admin, web_app, "Работа с заявками технической поддержки")
+Rel(devices_ext, api_gateway, "Получение настроек для работы и передача телеметрии")
+
+Rel(api_gateway, users_service, "Маршрутизация запросов")
+Rel(users_service, users_database, "Работа с данными пользователей")
+
+Rel(api_gateway, devices_service, "Маршрутизация запросов")
+Rel(devices_service, devices_database, "Работа с данными устройств")
+
+Rel(api_gateway, houses_service, "Маршрутизация запросов")
+Rel(houses_service, houses_database, "Работа с данными домов")
+
+Rel(api_gateway, telemetry_service, "Маршрутизация запросов")
+Rel(telemetry_service, telemetry_database, "Работа с данными телеметрии")
+
+@enduml
