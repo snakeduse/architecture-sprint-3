@@ -2,7 +2,7 @@
 @startuml
 title SmartHome - Диаграмма контекста
 
-!include ../c4_source/C4_Context.puml
+!include ./c4_source/C4_Context.puml
 
 Person(user, "User", "Пользователь системы")
 Person(administrator, "Administrator", "Администратор системы, работает с заявками пользователей")
