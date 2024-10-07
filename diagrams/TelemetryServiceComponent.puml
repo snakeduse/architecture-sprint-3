@@ -12,7 +12,7 @@ Container(telemetry_service, "Telemetry Service", "Erlang, Cowboy", "Серви�
   Component(response_serializer, "Response Serializer", "Сериализатор исходящих ответов")
 }
 
-ContainerDb(db, "Database", "MongoDB", "Хранение информации о телеметрии")
+ContainerDb(db, "Database", "PostgreSQL", "Основная база данных для хранения информации")
 
 Rel(api_handler, requests_parser, "Разбор и валидация входящих HTTP-запросов")
 Rel(api_handler, db_layer, "Обращение к базе данных")
