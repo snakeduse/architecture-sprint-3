@@ -27,7 +27,7 @@ Container_Boundary(SmartHomeSystem, "SmartHome System") {
   ContainerDb(telemetry_database, "Telemetry Database", "MongoDB", "Хранение информации о телеметрии")
 
   Container(support_service, "Support Service", "Python, Flask", "Сервис технической поддержки")
-  ContainerDb(support_database, "Support Service Database", "PostgreSQL", "Хранение данных сервиса технической поддержки")
+  ContainerDb(support_database, "Support Database", "PostgreSQL", "Хранение данных сервиса технической поддержки")
 }
 
 Rel(web_app, api_gateway, "Работа с данными системы")
