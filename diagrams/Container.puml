@@ -25,6 +25,9 @@ Container_Boundary(SmartHomeSystem, "SmartHome System") {
 
   Container(telemetry_service, "Telemetry Service", "Erlang, Cowboy", "Сервис управления телеметрией")
   ContainerDb(telemetry_database, "Telemetry Database", "MongoDB", "Хранение информации о телеметрии")
+
+  Container(tech_service, "Tech Service", "Python, Flask", "Сервис технической поддержки")
+  ContainerDb(tech_database, "Tech Service Database", "PostgreSQL", "Хранение данных сервиса технической поддержки")
 }
 
 Rel(web_app, api_gateway, "Работа с данными системы")
@@ -44,5 +47,8 @@ Rel(houses_service, houses_database, "Работа с данными домов"
 
 Rel(api_gateway, telemetry_service, "Маршрутизация запросов")
 Rel(telemetry_service, telemetry_database, "Работа с данными телеметрии")
+
+Rel(api_gateway, tech_service, "Маршрутизация запросов")
+Rel(tech_service, tech_database, "Работа с данными технической поддержки")
 
 @enduml
