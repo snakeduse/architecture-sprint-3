@@ -5,7 +5,8 @@
     {mod, {telemetry_service_app, []}},
     {applications, [
         kernel,
-        stdlib
+        stdlib,
+        cowboy
     ]},
     {env, []},
     {modules, []},

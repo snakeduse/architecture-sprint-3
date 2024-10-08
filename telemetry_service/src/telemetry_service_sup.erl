@@ -28,10 +28,33 @@ start_link() ->
 init([]) ->
     SupFlags = #{
         strategy => one_for_all,
-        intensity => 0,
-        period => 1
+        intensity => 1,
+        period => 5
     },
-    ChildSpecs = [],
+    ChildSpecs = [
+        telemetry_service_db_spec()
+    ],
     {ok, {SupFlags, ChildSpecs}}.
 
 %% internal functions
+
+telemetry_service_db_spec() ->
+    Host = os:getenv("DB_HOST", "localhost"),
+    Port = erlang:list_to_integer(os:getenv("DB_PORT", "5432")),
+    User = os:getenv("DB_USER", "postgres"),
+    Pass = os:getenv("DB_PASSWORD", "postgres"),
+    DbName = os:getenv("DB_NAME", "smart_home"),
+    DbInfo = #{
+        host => Host,
+        port => Port,
+        username => User,
+        password => Pass,
+        database => DbName
+    },
+    #{
+        id => telemetry_service_db,
+        start => {telemetry_service_db, start_link, [DbInfo]},
+        restart => permanent,
+        shutdown => 2000,
+        type => worker
+    }.
