@@ -1,22 +1,201 @@
 openapi: 3.0.0
 info:
-  title: simple-api
-  version: 0.1.0
-
+  title: Smart Home
+  description: Описание REST API проекта Smart Home
+  version: 1.0.11
+tags:
+  - name: devices
+    description: Устройства
 paths:
-  /hello:
+  /devices/{deviceId}:
     get:
+      tags:
+        - devices
+      summary: Получение информации об устройстве
+      description: Возвращает подробную информацию о конкретном устройстве по его ID.
+      operationId: getDeviceById
+      parameters:
+        - name: deviceId
+          in: path
+          description: Уникальный идентификатор устройства
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         '200':
-          description: A simple hello world!
+          description: Успешная операция
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-              example: Hello from a mocked response!
-      x-kusk:
-        upstream:
-          service:
-            name: hello-world-svc
-            namespace: default
-            port: 8080
+                $ref: '#/components/schemas/Device'
+        '400':
+          description: Указан некорректный идентификатор устройства
+        '404':
+          description: Устройство не найдено
+  /devices/{deviceId}/status:
+    put:
+      tags:
+        - devices
+      summary: Обновление состояния устройства
+      description: Позволяет изменить состояние устройства (например, включить/выключить).
+      operationId: updateDeviceStatus
+      parameters:
+        - name: deviceId
+          in: path
+          description: Уникальный идентификатор устройства
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Изменить состояние устройства (например, включить/выключить).
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceStatus'
+        required: true
+      responses:
+        '201':
+          description: Операция прошла успешно
+        '400':
+          description: Запрос некорректен
+        '404':
+          description: Устройство не найдено
+  /devices/{deviceId}/commands:
+    post:
+      tags:
+        - devices
+      summary: Отправка команды устройству
+      description: Отправляет команду устройству (например, «установить температуру 22 градуса»).
+      operationId: sendDeviceCommand
+      parameters:
+        - name: deviceId
+          in: path
+          description: Уникальный идентификатор устройства
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceCommand'
+        required: true
+      responses:
+        '201':
+          description: Операция прошла успешно
+        '400':
+          description: Запрос некорректен
+        '404':
+          description: Устройство не найдено
+  /devices/{deviceId}/telemetry/latest:
+    get:
+      tags:
+        - devices
+      summary: Получение последних данных телеметрии
+      description: Возвращает последнее полученное значение телеметрии для устройства.
+      operationId: getLastDeviceTelemetry
+      parameters:
+        - name: deviceId
+          in: path
+          description: Уникальный идентификатор устройства
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Операция прошла успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceTelemetry'
+        '404':
+          description: Устройство не найдено
+  /devices/{deviceId}/telemetry:
+    get:
+      tags:
+        - devices
+      summary: Получение исторических данных телеметрии
+      description:  Возвращает исторические данные телеметрии для устройства за определённый период времени.
+      operationId: getDeviceTelemetry
+      parameters:
+        - name: deviceId
+          in: path
+          description: Уникальный идентификатор устройства
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Операция прошла успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceTelemetries'
+        '404':
+          description: Устройство не найдено
+components:
+  schemas:
+    Device:
+      required:
+        - name
+        - type_id
+        - house_id
+        - serial_number
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 96f67df4-50d0-46c6-ae91-15df77ced717
+        title:
+          type: string
+          example: Лампочка
+        type_id:
+          type: string
+          format: uuid
+          example: bfead58e-5ccb-48bf-a51d-c32697b1b204
+        house_id:
+          type: string
+          format: uuid
+          example: cb9f23dd-a24b-499e-b4e1-a716dbed6964
+        serial_number:
+          type: string
+          example: 4CE0460D0G
+        status:
+          type: string
+          enum: [on, off]
+    DeviceStatus:
+      required:
+        - status
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ on, off ]
+    DeviceCommand:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: turn_on
+    DeviceTelemetry:
+      type: object
+      properties:
+        temperature:
+          type: number
+          example: 25.5
+    DeviceTelemetries:
+      type: array
+      items:
+        type: object
+        properties:
+          temperature:
+            type: number
+            example: 25.5
