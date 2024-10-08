@@ -1,0 +1,13 @@
+{application, telemetry_service, [
+    {description, "Telemetry Service"},
+    {vsn, "0.1.0"},
+    {registered, []},
+    {mod, {telemetry_service_app, []}},
+    {applications, [
+        kernel,
+        stdlib
+    ]},
+    {env, []},
+    {modules, []},
+    {links, []}
+ ]}.
