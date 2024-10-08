@@ -138,6 +138,32 @@ paths:
                 $ref: '#/components/schemas/DeviceTelemetries'
         '404':
           description: Устройство не найдено
+  /telemetry:
+    post:
+      tags:
+        - devices
+      summary: Сохранение данных телеметрии
+      description: Позволяет сохранить данные телеметрии.
+      operationId: saveTelemetryData
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                device_id:
+                  type: string
+                  format: uuid
+                  description: Идентификатор устройства, к которому относится телеметрия.
+                temperature:
+                  type: number
+                  example: 25.5
+        required: true
+      responses:
+        '201':
+          description: Операция прошла успешно
+        '400':
+          description: Запрос некорректен
 components:
   schemas:
     Device:
