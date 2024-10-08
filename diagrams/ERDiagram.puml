@@ -21,7 +21,7 @@ entity Device {
   type_id: uuid
   house_id: uuid
   serial_number: text
-  status: boolean
+  status: text
   --
 }
 
