@@ -19,7 +19,6 @@
 
 -include_lib("kernel/include/logger.hrl").
 -include_lib("epgsql/include/epgsql.hrl").
--include("./devices_service.hrl").
 
 -record(state, { 
     connection :: pid()
@@ -136,7 +135,9 @@ terminate(Reason, #state{ connection = C }) ->
 exec_query(Fn, Q, C) ->
     case epgsql:squery(C, Q) of
         {ok, _Columns, Payload} ->
-            Fn(Payload);            
+            Fn(Payload);
+        {ok, Payload} ->
+            Fn(Payload);   
         {ok, _Columns, []} ->
             {ok, not_found};
         {error, #error{ code = Code, message = Message}} ->

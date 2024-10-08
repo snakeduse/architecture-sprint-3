@@ -42,10 +42,16 @@ db_to_json(Req, State = device) ->
     DeviceId = cowboy_req:binding(device_id, Req),
     {ok, Device} = devices_service_db:get({id, DeviceId}),
     {response_serializer:serialize_json(Device), Req, State};
+
 db_to_json(Req, State = latest_telemetry) ->
-    {<<"not implemented">>, Req, State};
+    DeviceId = cowboy_req:binding(device_id, Req),
+    {ok, Telemetry} = devices_service_db:get({telemetry_latest, DeviceId}),
+    {response_serializer:serialize_json(Telemetry), Req, State};
+
 db_to_json(Req, State = all_telemetry) ->
-    {<<"not implemented">>, Req, State}.
+    DeviceId = cowboy_req:binding(device_id, Req),
+    {ok, Telemetry} = devices_service_db:get({telemetry_all, DeviceId}),
+    {response_serializer:serialize_json(Telemetry), Req, State}.
 
 json_to_db(Req, State = device_status) ->
     DeviceId = cowboy_req:binding(device_id, Req),
@@ -62,4 +68,3 @@ json_to_db(Req, State = device_cmd) ->
     {true, Req, State};
 json_to_db(Req, State) ->
     {false, Req, State}.
-
