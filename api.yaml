@@ -31,8 +31,8 @@ paths:
                 $ref: '#/components/schemas/Device'
         '400':
           description: Указан некорректный идентификатор устройства
-        '404':
-          description: Устройство не найдено
+        '500':
+          description: Ошибка на сервере
   /devices/{deviceId}/status:
     put:
       tags:
@@ -56,12 +56,12 @@ paths:
               $ref: '#/components/schemas/DeviceStatus'
         required: true
       responses:
-        '201':
+        '204':
           description: Операция прошла успешно
         '400':
           description: Запрос некорректен
-        '404':
-          description: Устройство не найдено
+        '500':
+          description: Ошибка на сервере
   /devices/{deviceId}/commands:
     post:
       tags:
@@ -84,12 +84,12 @@ paths:
               $ref: '#/components/schemas/DeviceCommand'
         required: true
       responses:
-        '201':
+        '204':
           description: Операция прошла успешно
         '400':
           description: Запрос некорректен
-        '404':
-          description: Устройство не найдено
+        '500':
+          description: Ошибка на сервере
   /devices/{deviceId}/telemetry/latest:
     get:
       tags:
@@ -112,8 +112,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeviceTelemetry'
-        '404':
-          description: Устройство не найдено
+        '500':
+          description: Ошибка на сервере
   /devices/{deviceId}/telemetry:
     get:
       tags:
@@ -136,8 +136,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeviceTelemetries'
-        '404':
-          description: Устройство не найдено
+        '500':
+          description: Ошибка на сервере
   /telemetry:
     post:
       tags:
@@ -160,10 +160,10 @@ paths:
                   example: 25.5
         required: true
       responses:
-        '201':
+        '204':
           description: Операция прошла успешно
-        '400':
-          description: Запрос некорректен
+        '500':
+          description: Ошибка на сервере
 components:
   schemas:
     Device:
@@ -195,6 +195,9 @@ components:
         status:
           type: string
           enum: [on, off]
+        last_updated:
+          type: string
+          format: date-time
     DeviceStatus:
       required:
         - status
