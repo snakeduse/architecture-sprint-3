@@ -22,6 +22,7 @@ entity Device {
   house_id: uuid
   serial_number: text
   status: text
+  last_updated: timestamp
   --
 }
 
@@ -34,7 +35,7 @@ entity DeviceType {
 entity Telemetry {
   device_id: uuid
   data: json
-  changed_at: datetime
+  changed_at: timestamp
   --
 }
 

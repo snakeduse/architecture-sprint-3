@@ -191,6 +191,10 @@ components:
         temperature:
           type: number
           example: 25.5
+        changed_at:
+          type: string
+          format: date-time
+          description: Время в формате ISO 8601 для часового пояса UTC+0
     DeviceTelemetries:
       type: array
       items:
@@ -199,3 +203,7 @@ components:
           temperature:
             type: number
             example: 25.5
+          changed_at:
+            type: string
+            format: date-time
+            description: Время в формате ISO 8601 для часового пояса UTC+0
