@@ -96,7 +96,7 @@
 
 ### REST API
 
-REST API основных сервисов проекта "Smart Home" описан в файле [api.yaml](./api.yaml).
+REST API основных сервисов проекта "Smart Home" описан в файле [openapi.yaml](./openapi.yaml).
 Файл содержит REST API сервисов `Devices Service` и `Telemetry Service`.
 
 ## Базовая настройка монолита (модель AsIs)
