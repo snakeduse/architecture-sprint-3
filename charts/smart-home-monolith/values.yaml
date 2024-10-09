@@ -103,7 +103,15 @@ affinity: {}
 
 postgresql:
   enabled: true
+  connection:
+    host: 
+    port: 
   auth:
-    username: your_username
-    password: your_password
+    username: postgres
+    password: postgres
     database: smart_home
+
+devices-service:
+  image: ghcr.io/snakeduse/devices-service:latest
+  tag: latest
+  http-port: 8080
