@@ -20,7 +20,7 @@
 -include_lib("kernel/include/logger.hrl").
 -include_lib("epgsql/include/epgsql.hrl").
 
--record(state, { 
+-record(state, {
     connection :: pid()
 }).
 
@@ -98,7 +98,7 @@ handle_call({get, {telemetry_all, Id}}, _From, State = #state{ connection = C })
                 fun({_Id, Data, ChangedAt}) ->
                     JSON = jsone:decode(Data),
                     JSON#{ <<"changed_at">> => ChangedAt }
-                end, 
+                end,
                 Items
             )}
         end,
@@ -110,7 +110,7 @@ handle_call({get, {telemetry_all, Id}}, _From, State = #state{ connection = C })
 handle_call({update, {status, Id, Value}}, _From, State = #state{ connection = C }) ->
     ?LOG_DEBUG("Updsate device status - id: ~tp status: ~tp", [Id, Value]),
     Query = io_lib:format(
-        "UPDATE devices SET  status='~s', last_updated=now() WHERE id='~s'", 
+        "UPDATE devices SET  status='~s', last_updated=now() WHERE id='~s'",
         [Value, Id]
     ),
     Result = exec_query(fun(_) -> ok end, Query, C),
@@ -134,12 +134,12 @@ terminate(Reason, #state{ connection = C }) ->
 
 exec_query(Fn, Q, C) ->
     case epgsql:squery(C, Q) of
+        {ok, _Columns, []} ->
+            {ok, not_found};
         {ok, _Columns, Payload} ->
             Fn(Payload);
         {ok, Payload} ->
-            Fn(Payload);   
-        {ok, _Columns, []} ->
-            {ok, not_found};
+            Fn(Payload);
         {error, #error{ code = Code, message = Message}} ->
             {error, Code, Message}
     end.
