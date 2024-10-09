@@ -41,8 +41,14 @@ update({status, _Id, _Value} = R) ->
 %%% gen_event callbacks
 init(ConnInfo) ->
     ?LOG_INFO("Connect to DB. ~tp", ConnInfo),
-    {ok, Connection} = epgsql:connect(ConnInfo),
-    {ok, #state{ connection = Connection }}.
+    case epgsql:connect(ConnInfo) of
+        {ok, Connection} ->
+            {ok, #state{ connection = Connection }};
+        {error, Reason} ->
+            ?LOG_ERROR("Open DB conenction error ~tp", [Reason]),
+            timer:sleep(6000),
+            exit(Reason)
+    end.
 
 handle_call({get, {id, DeviceId}}, _From, State = #state{ connection = C }) ->
     ?LOG_DEBUG("Get Device - id: ~tp", [DeviceId]),
