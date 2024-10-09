@@ -1,0 +1,22 @@
+@startuml
+title Telemetry Service - Диаграмма компонентов
+
+top to bottom direction
+
+!include ./c4_source/C4_Component.puml
+
+Container(telemetry_service, "Telemetry Service", "Erlang, Cowboy", "Сервис управления телеметрией") {
+  Component(api_handler, "API Handler", "Обработка HTTP-API запросов")
+  Component(requests_parser, "Requests Parser", "Парсер входящих HTTP-запросов")
+  Component(db_layer, "Database API", "API базы данных")
+  Component(response_serializer, "Response Serializer", "Сериализатор исходящих ответов")
+}
+
+ContainerDb(db, "Database", "PostgreSQL", "Основная база данных для хранения информации")
+
+Rel(api_handler, requests_parser, "Разбор и валидация входящих HTTP-запросов")
+Rel(api_handler, db_layer, "Обращение к базе данных")
+Rel(api_handler, response_serializer, "Сериализация ответов")
+Rel(db_layer, db, "Обращение к базе данных")
+
+@enduml

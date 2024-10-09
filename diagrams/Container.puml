@@ -1,0 +1,35 @@
+@startuml
+title SmartHome - Диаграмма контейнеров
+
+top to bottom direction
+
+!include ./c4_source/C4_Container.puml
+
+Person(user, "User", "Пользователь системы")
+System_Ext(devices_ext, "Devices", "Устройства, которые управляют домом")
+System(SmartHomeSystem, "SmartHome System", "Система управления домом")
+
+Container_Boundary(SmartHomeSystem, "SmartHome System") {
+  Container(web_app, "UI Web Application", "React", "Основное веб-приложение для управления системой")
+  Container(api_gateway, "API Gateway", "Kusk, HTTP/1.1", "Обработка входящих HTTP-запросов")
+  Container(monolith, "Smart Home Monolith", "Java", "Основное монолитное приложение")
+  Container(devices_service, "Devices Service", "Erlang, Cowboy", "Сервис управления устройствами")
+  Container(telemetry_service, "Telemetry Service", "Erlang, Cowboy", "Сервис управления телеметрией")
+
+  ContainerDb(database, "Database", "PostgreSQL", "Основная база данных для хранения информации")
+}
+
+Rel(web_app, api_gateway, "Работа с данными системы")
+
+Rel(user, web_app, "Регистрация, управление устройствами и телеметрией")
+Rel(devices_ext, api_gateway, "Получение настроек для работы и передача телеметрии")
+
+Rel(api_gateway, monolith, "Маршрутизация запросов монолита")
+Rel(api_gateway, devices_service, "Маршрутизация запросов для устройств")
+Rel(api_gateway, telemetry_service, "Маршрутизация запросов для телеметрии")
+
+Rel(monolith, database, "Работа с данными монолита")
+Rel(devices_service, database, "Работа с данными устройств")
+Rel(telemetry_service, database, "Работа с данными телеметрии")
+
+@enduml

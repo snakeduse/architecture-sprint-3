@@ -1,0 +1,47 @@
+@startuml
+
+entity User {
+  * id: uuid <<generated>>
+  login: varchar(100)
+  password: varchar(100)
+  --
+}
+
+entity House {
+  * id: uuid <<generated>>
+  title: varchar(100)
+  address: text
+  user_id: uuid
+  --
+}
+
+entity Device {
+  * id: uuid <<generated>>
+  title: varchar(100)
+  type_id: uuid
+  house_id: uuid
+  serial_number: varchar(100)
+  status: varchar(50)
+  last_updated: timestamp <<generated>>
+  --
+}
+
+entity DeviceType {
+  * id: uuid <<generated>>
+  title: varchar(100)
+  --
+}
+
+entity Telemetry {
+  device_id: uuid
+  data: json
+  changed_at: timestamp <<generated>>
+  --
+}
+
+User ||---o{ House
+House ||---o{ Device
+Device }o----o{ DeviceType
+Device ||----o{ Telemetry
+
+@enduml

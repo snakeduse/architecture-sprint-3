@@ -1,0 +1,14 @@
+{application, devices_service, [
+    {description, "Device Service"},
+    {vsn, "0.1.0"},
+    {registered, []},
+    {mod, {devices_service_app, []}},
+    {applications, [
+        kernel,
+        stdlib,
+        cowboy
+    ]},
+    {env, []},
+    {modules, []},
+    {links, []}
+ ]}.

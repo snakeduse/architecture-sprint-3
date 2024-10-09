@@ -1,0 +1,17 @@
+
+@startuml
+title SmartHome - Диаграмма контекста
+
+!include ./c4_source/C4_Context.puml
+
+Person(user, "User", "Пользователь системы")
+Person(administrator, "Administrator", "Администратор системы, работает с заявками пользователей")
+System(SmartHomeSystem, "SmartHome System", "Система управления домом")
+
+System_Ext(devices, "Devices", "Устройства, которые управляют домом")
+
+Rel(user, SmartHomeSystem, "Управление отоплением в своем доме")
+Rel(administrator, SmartHomeSystem, "Управление заявками пользователей")
+Rel(SmartHomeSystem, devices, "Получение данных для работы (новое значение температуры и пр.)")
+
+@enduml
