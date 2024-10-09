@@ -22,7 +22,7 @@
 -include_lib("epgsql/include/epgsql.hrl").
 
 -record(state, {
-    connection :: pid(),
+    connection = undefined :: pid(),
     connection_info :: map()
 }).
 
@@ -44,17 +44,18 @@ update({status, _Id, _Value} = R) ->
 %%% gen_event callbacks
 
 init(ConnInfo) ->
+    process_flag(trap_exit, true),
     {ok, #state{ connection_info = ConnInfo }, {continue, connect}}.
 
 handle_continue(connect, State = #state{ connection_info = ConnInfo}) ->
-    ?LOG_INFO("Connect to DB. ~tp", ConnInfo),
+    ?LOG_INFO("Connect to DB. ~tp", [ConnInfo]),
 
     case epgsql:connect(ConnInfo) of
         {ok, Connection} ->
             {noreply, State#state{ connection = Connection }};
         {error, Reason} ->
             ?LOG_ERROR("Open DB conenction error ~tp", [Reason]),
-            timer:sleep(6000),
+            timer:sleep(2000),
             exit(Reason)
     end.
 
@@ -138,10 +139,44 @@ handle_cast(Msg, State) ->
     ?LOG_INFO("Unexpected cast ~tp.", [Msg]),
     {noreply, State}.
 
+% handle_event(info, {'EXIT', Conn, Reason}, State, #state{connections = ConnList, on_disconnect = OnDisconnect, timeout_info = TimeoutInfo} = Data) ->
+%     try
+%         case maps:is_key(Conn, ConnList) of
+%             true ->
+%                 handle_on_disconnect(OnDisconnect, Conn, Reason),
+%                 NewConnections = maps:remove(Conn, ConnList),
+%                 NewData = Data#state{connections = NewConnections},
+%                 case State of
+%                     running ->
+%                         case TimeoutInfo of
+%                             #timeout_info{timeout = T, factor = F, max_attempts = MA, max_timeout = MT} ->
+%                                 ?RLOG_WARNING("Connection is down. Reconnecting."),
+%                                 TotalTimeout = choose_timeout( MT, calc_max_attempt_timeout(T, F, MA) ),
+%                                 {T, NT} = next_timeout(T, F, TotalTimeout),
+%                                 {next_state, reconnecting, NewData, {{timeout, reconnect}, T, NT}};
+%                             undefined ->
+%                                 ?RLOG_WARNING("Connection is down. Stopping the pool."),
+%                                 {stop, shutdown, NewData}
+%                         end;
+%                     reconnecting ->
+%                         {keep_state, NewData}
+%                 end;
+%             false ->
+%                 ?RLOG_INFO("Unknown connection is down."),
+%                 keep_state_and_data
+%         end
+%     catch
+%         E:R:S ->
+%             ?RLOG_ERROR("Close connection error. Stopping the pool.", #{error => E, reason => R, stack => S}),
+%             {stop, shutdown}
+%     end;
 handle_info(Info, State) ->
     ?LOG_INFO("Unexpected info ~tp.", [Info]),
     {noreply, State}.
 
+terminate(Reason, #state{ connection = undefined }) ->
+    ?LOG_INFO("terminated with reason ~tp.", [Reason]),
+    ok;
 terminate(Reason, #state{ connection = C }) ->
     ?LOG_INFO("terminated with reason ~tp.", [Reason]),
     ok = epgsql:close(C).

@@ -29,7 +29,7 @@ init([]) ->
     SupFlags = #{
         strategy => one_for_all,
         intensity => 1,
-        period => 5
+        period => 1
     },
     ChildSpecs = [
         devices_service_db_spec()
