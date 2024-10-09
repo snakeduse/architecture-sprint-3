@@ -50,8 +50,12 @@ db_to_json(Req, State = latest_telemetry) ->
 
 db_to_json(Req, State = all_telemetry) ->
     DeviceId = cowboy_req:binding(device_id, Req),
-    {ok, Telemetry} = devices_service_db:get({telemetry_all, DeviceId}),
-    {response_serializer:serialize_json(Telemetry), Req, State}.
+    case devices_service_db:get({telemetry_all, DeviceId}) of
+        {ok, not_found} ->  
+            {<<"[]">>, Req, State};
+        {ok, Telemetry} ->
+            {response_serializer:serialize_json(Telemetry), Req, State}
+    end.
 
 json_to_db(Req, State = device_status) ->
     DeviceId = cowboy_req:binding(device_id, Req),
