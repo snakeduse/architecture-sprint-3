@@ -139,37 +139,6 @@ handle_cast(Msg, State) ->
     ?LOG_INFO("Unexpected cast ~tp.", [Msg]),
     {noreply, State}.
 
-% handle_event(info, {'EXIT', Conn, Reason}, State, #state{connections = ConnList, on_disconnect = OnDisconnect, timeout_info = TimeoutInfo} = Data) ->
-%     try
-%         case maps:is_key(Conn, ConnList) of
-%             true ->
-%                 handle_on_disconnect(OnDisconnect, Conn, Reason),
-%                 NewConnections = maps:remove(Conn, ConnList),
-%                 NewData = Data#state{connections = NewConnections},
-%                 case State of
-%                     running ->
-%                         case TimeoutInfo of
-%                             #timeout_info{timeout = T, factor = F, max_attempts = MA, max_timeout = MT} ->
-%                                 ?RLOG_WARNING("Connection is down. Reconnecting."),
-%                                 TotalTimeout = choose_timeout( MT, calc_max_attempt_timeout(T, F, MA) ),
-%                                 {T, NT} = next_timeout(T, F, TotalTimeout),
-%                                 {next_state, reconnecting, NewData, {{timeout, reconnect}, T, NT}};
-%                             undefined ->
-%                                 ?RLOG_WARNING("Connection is down. Stopping the pool."),
-%                                 {stop, shutdown, NewData}
-%                         end;
-%                     reconnecting ->
-%                         {keep_state, NewData}
-%                 end;
-%             false ->
-%                 ?RLOG_INFO("Unknown connection is down."),
-%                 keep_state_and_data
-%         end
-%     catch
-%         E:R:S ->
-%             ?RLOG_ERROR("Close connection error. Stopping the pool.", #{error => E, reason => R, stack => S}),
-%             {stop, shutdown}
-%     end;
 handle_info(Info, State) ->
     ?LOG_INFO("Unexpected info ~tp.", [Info]),
     {noreply, State}.
