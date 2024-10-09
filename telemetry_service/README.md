@@ -1,9 +1,13 @@
-telemetry_service
+Микросервис «Управление телеметрией» 
 =====
 
-An OTP application
+Переменные окружения:
 
-Build
------
-
-    $ rebar3 compile
+- База данных:
+    - DB_HOST - Хост;
+    - DB_PORT - Порт;
+    - DB_USER - Пользователь;
+    - DB_PASSWORD - Пароль;
+    - DB_NAME - Название БД;
+- Веб-сервер:
+    - HTTP_PORT - Порт.

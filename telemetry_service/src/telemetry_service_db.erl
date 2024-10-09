@@ -10,6 +10,7 @@
 %%% gen_event callbacks
 -export([
     init/1,
+    handle_continue/2,
     handle_cast/2,
     handle_call/3,
     handle_info/2,
@@ -19,8 +20,9 @@
 -include_lib("kernel/include/logger.hrl").
 -include_lib("epgsql/include/epgsql.hrl").
 
--record(state, { 
-    connection :: pid()
+-record(state, {
+    connection = undefined :: pid(),
+    connection_info :: map()
 }).
 
 start_link(DbInfo) ->
@@ -31,9 +33,20 @@ add({telemetry, _Id, _Value} = R) ->
 
 %%% gen_event callbacks
 init(ConnInfo) ->
-    ?LOG_INFO("Connect to DB. ~tp", ConnInfo),
-    {ok, Connection} = epgsql:connect(ConnInfo),
-    {ok, #state{ connection = Connection }}.
+    process_flag(trap_exit, true),
+    {ok, #state{ connection_info = ConnInfo }, {continue, connect}}.
+
+handle_continue(connect, State = #state{ connection_info = ConnInfo}) ->
+    ?LOG_INFO("Connect to DB. ~tp", [ConnInfo]),
+
+    case epgsql:connect(ConnInfo) of
+        {ok, Connection} ->
+            {noreply, State#state{ connection = Connection }};
+        {error, Reason} ->
+            ?LOG_ERROR("Open DB conenction error ~tp", [Reason]),
+            timer:sleep(2000),
+            exit(Reason)
+    end.
 
 handle_call({add, {telemetry, Id, Value}}, _From, State = #state{ connection = C }) ->
     ?LOG_DEBUG("Add Telemetry for device id: ~tp", [Id]),
