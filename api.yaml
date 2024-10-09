@@ -112,6 +112,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeviceTelemetry'
+        '400':
+          description: Запрос некорректен
         '500':
           description: Ошибка на сервере
   /devices/{deviceId}/telemetry:
@@ -136,6 +138,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeviceTelemetries'
+        '400':
+          description: Запрос некорректен
         '500':
           description: Ошибка на сервере
   /telemetry:
@@ -162,6 +166,8 @@ paths:
       responses:
         '204':
           description: Операция прошла успешно
+        '400':
+          description: Запрос некорректен
         '500':
           description: Ошибка на сервере
 components:
